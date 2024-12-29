@@ -98,49 +98,6 @@ def api_precompute_embeddings():
     precompute_embeddings(corpus)
     return jsonify({'message': 'Embeddings precomputed and saved.'})
 
-# def main():
-#     """
-#     Main function to load or precompute embeddings and find words based on user descriptions.
-#     The following steps are performed:
-#     1. Attempts to load precomputed embeddings (stored in embeddings.msgpack).
-#     2. If embeddings are not found, precompute and load them.
-#     3. Enters an interactive loop where the user can input a description of a word.
-#     4. Searches and displays the best matching word based on the description.
-#     5. Prompts the user if they want to see the word's definition.
-#     6. Asks the user if they want to continue or exit.
-#     Exceptions:
-#         FileNotFoundError: If the embeddings file is not found, it triggers precomputation of embeddings.
-#     Returns:
-#         None
-#     """
-#     try:
-#         print("Loading data...hang tight!")
-#         corpus_embeddings = load_embeddings()
-#     except FileNotFoundError:
-#         print("Precomputing...this may take a while.")
-#         precompute_embeddings(corpus)
-#         print("Embeddings precomputed!")
-#         corpus_embeddings = load_embeddings()
-            
-#     while True:
-#         print("Input a description of the word you are looking for:")
-#         desc = input()
-#         best_match = find_words(description=desc, corpus_embeddings=corpus_embeddings)
-#         if best_match is None:
-#             print("Call it an egg, the way our circuits are fried! We can't find a word to match that description.")
-#         print("The best matches are: ", best_match)
-#         print("\nWould you like to see the definition of the word? (y/n)")
-#         if input() == 'y':
-#             print(find_def(best_match))
-#         else:
-#             print("\nWould you like to search for another word? (y/n)")
-#             cont = input()
-#             if cont == 'n':
-#                 print("Thanks for stopping by! We hope you found what was on the tip of your tongue.")
-#                 break
-#             else:
-#                 continue
-
 if __name__ == "__main__":
     model_name = "huawei-noah/TinyBERT_General_4L_312D"
     model = AutoModel.from_pretrained(model_name)
