@@ -31,12 +31,12 @@ def precompute_embeddings(corpus):
         embeddings[word] = get_embeddings(word)
     with open('../dat/embeddings.json', 'w') as f:
         json.dump(embeddings, f)
-    print("Embeddings saved to embeddings.json")
+    # print("Embeddings saved to embeddings.json")
 
 def load_embeddings():
     with open('../dat/embeddings.json', 'r') as f:
         embeddings = json.load(f)
-    print("Embeddings loaded from embeddings.json")
+    # print("Embeddings loaded from embeddings.json")
     return embeddings
         
 def find_words(description, corpus_embeddings):
