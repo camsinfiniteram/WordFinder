@@ -1,4 +1,4 @@
-import torch, nltk, json, random
+import torch, nltk, json, msgpack, random, requests
 from transformers import AutoModel, BertTokenizer
 from nltk.corpus import wordnet
 from nltk.corpus import words
@@ -13,8 +13,7 @@ except LookupError:
 
 embeddings = {}
 all_words = words.words()
-filtered_words = [word for word in all_words if wordnet.synsets(word)]
-corpus = random.sample(filtered_words, 1000) # subset for faster computation
+corpus = random.sample(all_words, 50000) # sample for faster computation
 lemmatizer = nltk.WordNetLemmatizer()
 
 
@@ -29,14 +28,14 @@ def get_embeddings(word):
 def precompute_embeddings(corpus):
     for word in corpus:
         embeddings[word] = get_embeddings(word)
-    with open('../dat/embeddings.json', 'w') as f:
-        json.dump(embeddings, f)
-    # print("Embeddings saved to embeddings.json")
+    with open('../dat/embeddings.msgpack', 'wb') as f:
+        msgpack.pack(embeddings, f)
+    print("Embeddings saved to embeddings.msgpack")
 
 def load_embeddings():
-    with open('../dat/embeddings.json', 'r') as f:
-        embeddings = json.load(f)
-    # print("Embeddings loaded from embeddings.json")
+    with open('../dat/embeddings.msgpack', 'rb') as f:
+        embeddings = msgpack.unpack(f)
+    print("Embeddings loaded from embeddings.msgpack")
     return embeddings
         
 def find_words(description, corpus_embeddings):
@@ -57,17 +56,24 @@ def find_words(description, corpus_embeddings):
 
 def find_def(word):
     base_word = lemmatizer.lemmatize(word) # reduce word to its root (e.g. "dancing" -> "dance")
-    sets = wordnet.synsets(base_word)
-    if not sets:
-        return "Loose wires today! Sorry, that word was not found in our vocabulary."
+    print("baseword: ", base_word)
+    # load in dictionary API
+    response = requests.get(f"https://api.dictionaryapi.dev/api/v2/entries/en/{base_word}")
+    if response.status_code == 200:
+        data = response.json()
+        definition = data[0]['meanings'][0]['definitions'][0]['definition']
+        if definition:
+            return definition
+        elif definition == "":
+            return "Rare as a unicorn! We couldn't find a definition for that word."
     else:
-        return sets[0].definition()
+        return "Rust in our gears! Sorry, we couldn't load the definition for that word."
 
 def main():
     """
     Main function to load or precompute embeddings and find words based on user descriptions.
     The following steps are performed:
-    1. Attempts to load precomputed embeddings (stored in embeddings.json).
+    1. Attempts to load precomputed embeddings (stored in embeddings.msgpack).
     2. If embeddings are not found, precompute and load them.
     3. Enters an interactive loop where the user can input a description of a word.
     4. Searches and displays the best matching word based on the description.
