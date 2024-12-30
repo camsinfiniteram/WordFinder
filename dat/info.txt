@@ -1,1 +1,3 @@
-Folder to contain embeddings (stored in .msgpack upon running the program)
+After running the program, this folder should contain:
+- embeddings.msgpack, containing all the precomputed embeddings for the corpus
+- model/ folder with model training components
