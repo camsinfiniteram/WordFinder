@@ -1,6 +1,6 @@
 import torch
 from transformers import AdamW, AutoModelForSequenceClassification, BertTokenizer
-from word_finder import main
+from word_finder import main, corpus
 
 # tokenize descriptions and pair them with their corresponding labels
 descriptions = ["a small, round, green fruit", "a happy, jovial person", "a devious comeback"]
@@ -33,9 +33,8 @@ def main():
     return model
 
 if __name__ == "__main__":
-    # load
     model_name = "huawei-noah/TinyBERT_General_4L_312D"
-    model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=35000)
+    model = AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=len(corpus))
     tokenizer = BertTokenizer.from_pretrained(model_name)
     optimizer = AdamW(model.parameters(), lr=1e-5)
     
