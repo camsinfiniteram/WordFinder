@@ -1,3 +1,5 @@
+# Pre-trained model from: https://huggingface.co/huawei-noah/TinyBERT_General_4L_312D
+# Licensed under the Apache License 2.0
 import torch
 from transformers import AdamW, AutoModelForSequenceClassification, BertTokenizer
 from word_finder import main, corpus

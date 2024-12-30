@@ -19,6 +19,12 @@ npm run dev
 6) Follow the prompts on the screen to enter your word description.
 7) Get the best match and definition!
 
+### Acknowledgments:
+This project utilizes the Wikimedia REST API to fetch word definitions. For more information on the API, please refer to their documentation [here]("https://en.wiktionary.org/api/rest_v1/").
+
+This project also uses a pre-trained model from [TinyBERT_General_4L_312D](https://huggingface.co/huawei-noah/TinyBERT_General_4L_312D), based on the original paper:
+
+Jiao, Xiaoqi, et al. "TinyBERT: Distilling BERT for Natural Language Understanding", *arXiv preprint arXiv:1909.10351*, 2019.
+
 ### Known Issues/Areas for Improvement:
-- Lemmatization is not perfect. Some words may not be fully reduced to their base forms.
-- While we scraped from the [dictionary API](https://github.com/meetDeveloper/freeDictionaryAPI), the WordNet corpus may not always match up to the words present in the API.
+- Lemmatization is not perfect. Some words may not be fully reduced to their base forms, and the dictionary may not recognize them.
