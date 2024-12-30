@@ -1,10 +1,11 @@
-import torch, nltk, json, msgpack, random, requests
+import torch, nltk, json, msgpack, random, requests, re
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from transformers import AutoModel, BertTokenizer
 from nltk.corpus import wordnet
 from nltk.corpus import words
 
+# initialize Flask app
 app = Flask(__name__)
 CORS(app)
 
@@ -16,9 +17,10 @@ except LookupError:
     nltk.download('wordnet')
     nltk.download('words')
 
+# globals 
 embeddings = {}
 all_words = words.words()
-corpus = random.sample(all_words, 40000) # sample for faster computation
+corpus = random.sample(all_words, 35000) # sample for faster computation
 lemmatizer = nltk.WordNetLemmatizer()
 
 
@@ -37,13 +39,15 @@ def precompute_embeddings(corpus):
         msgpack.pack(embeddings, f)
     print("Embeddings saved to embeddings.msgpack")
 
+# load precomputed embeddings (stored in msgpack format)
 def load_embeddings():
     global embeddings
     with open('../dat/embeddings.msgpack', 'rb') as f:
         embeddings = msgpack.unpack(f)
     print("Embeddings loaded from embeddings.msgpack")
     return embeddings
-        
+
+# find the best matching word in the corpus
 def find_words(description, corpus_embeddings):
     description_ft = get_embeddings(description)
     if description_ft is None:
@@ -60,16 +64,23 @@ def find_words(description, corpus_embeddings):
             best_match = word
     return best_match
 
+# find the definition of a word
 def find_def(word):
     base_word = lemmatizer.lemmatize(word) # reduce word to its root (e.g. "dancing" -> "dance")
     print("baseword: ", base_word)
     # load in dictionary API
-    response = requests.get(f"https://api.dictionaryapi.dev/api/v2/entries/en/{base_word}")
+    response = requests.get(f"https://en.wiktionary.org/api/rest_v1/page/definition/{base_word}")
     if response.status_code == 200:
         data = response.json()
-        definition = data[0]['meanings'][0]['definitions'][0]['definition']
-        if definition:
-            return definition
+        if 'en' in data and len(data['en']) > 0:
+            definitions = data['en'][0].get('definitions', None)
+            if len(definitions) > 0:
+                definition_raw = definitions[0].get('definition', None)
+                # remove HTML tags
+                definition = re.sub(r'<[^>]*>', '', definition_raw)
+                #print("definition: ", definition)
+                if definition:
+                    return definition
         else:
             returned = [
                 "Rare as a unicorn! Sorry, we couldn't find a definition for that word.",
@@ -98,6 +109,7 @@ def api_precompute_embeddings():
     precompute_embeddings(corpus)
     return jsonify({'message': 'Embeddings precomputed and saved.'})
 
+# main to run program and load model
 if __name__ == "__main__":
     model_name = "huawei-noah/TinyBERT_General_4L_312D"
     model = AutoModel.from_pretrained(model_name)
