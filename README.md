@@ -20,7 +20,7 @@ npm run dev
 7) Get the best match and definition!
 
 ### Acknowledgments:
-This project utilizes the Wikimedia REST API to fetch word definitions. For more information on the API, please refer to their documentation [here]("https://en.wiktionary.org/api/rest_v1/").
+This project utilizes the Wikimedia REST API to fetch word definitions. For more information on the API, please refer to their documentation [here](https://en.wiktionary.org/api/rest_v1/).
 
 This project also uses a pre-trained model from [TinyBERT_General_4L_312D](https://huggingface.co/huawei-noah/TinyBERT_General_4L_312D), based on the original paper:
 
