@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
+import './App.css';
+
+/**
+ * Main functionalities:
+ * - Fetches word from server based on user-inputted description
+ * - Displays word and its definition
+ * - Allows user to search for another word or exit app
+ * - Displays error message if server is down
+ * - Resets fields when user searches for another word
+ */
 
 function App() {
   const [word, setWord] = useState("");
@@ -7,15 +17,16 @@ function App() {
   const [definition, setDefinition] = useState("");
   const [err, setErr] = useState(null);
   const [message, showMessage] = useState(false);
-  const [loadingMessage] = useState("");
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const fetchWord = () => {
+    setLoadingMessage("Searching for the word...");
     fetch("http://localhost:5000/api/find_word", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',  
       },
-      body: JSON.stringify({ description }) 
+      body: JSON.stringify({ description })  
     })
       .then(res => res.json())  
       .then(data => {
@@ -38,17 +49,18 @@ function App() {
     setWord("");
     setDescription("");
     setDefinition("");
+    setLoadingMessage("");
+    showMessage("");
   };
 
   const exit = () => {
-    // when the button is clicked, the message will be displayed
     showMessage(true);
   }
 
   return (
     <div>
       <h1>What's That Word?</h1>
-      <h4>Welcome, O Wordless One!</h4>
+      <h3>Welcome, O Wordless One!</h3>
       <h4>Simply describe the word you're looking for, and we'll give you our best match.</h4>
         <input type="text" value={description}
         onChange={(e) => setDescription(e.target.value)}
@@ -56,13 +68,14 @@ function App() {
       />
       
       <Button onClick={fetchWord}>Submit</Button>
+      {loadingMessage && <p>{loadingMessage}</p>}
 
       {err && <p style={{ color: 'red' }}>{err}</p>}
       {
         word && (
           <div>
             <h3>Best Match:</h3>
-            <p>{word}</p>
+            <p><b>{word}</b></p>
             <h3>Definition:</h3>
             <p>{definition}</p>
             <p>Would you like to search for another word?</p>
