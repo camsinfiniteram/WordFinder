@@ -1,0 +1,39 @@
+h1 {
+    font-size: 2em;
+    color: hotpink;
+    margin-bottom: 0.25em;
+}
+h3 {
+    font-size: 1.5em;
+    color: pink;
+    margin-bottom: 0.25em;
+}
+
+h4 {
+    font-size: 1.2em;
+    color: pink;
+    margin-bottom: 0.25em;
+}
+p {
+    font-size: 1.4em;
+    color: hotpink;
+    margin-bottom: 1em;
+}
+
+input {
+    font-size: 1em;
+    color: hotpink;
+    margin-top: 1em;
+    height: 50px;
+}
+
+Button {
+    font-size: 1em;
+    color: black;
+    background-color: hotpink;
+    margin-top: 0.5em;
+    margin-left: 1em;
+    width: 75px;
+    height: 50px;
+
+}
